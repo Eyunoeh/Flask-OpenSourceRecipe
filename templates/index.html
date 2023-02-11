@@ -1,0 +1,75 @@
+{% extends 'base.html'%}
+
+{% block head %}
+
+{% endblock%}
+
+{% block body %}
+    <div class="main-container">
+        <div class="search-container">
+            <form>
+                <label>
+                    <input class="search-box" type="search" placeholder="Search recipe">
+                </label>
+                    <input class="search-button" type="submit" value="Search">
+            </form>
+        </div>
+    </div>
+    <div class="share-button-container">
+        <button onclick="openForm()">Share recipe</button>
+    </div>
+    <div class="popup-form" id="recipe_form" style="display:none">
+    <button class="btn-cancel" type="button"  onclick="closeForm()">Close</button>
+        <form action="/share-recipe" method="post" enctype="multipart/form-data">
+            <h1>Food Recipe</h1>
+            <label for="food-name"></label><br>
+            <label>
+                <input class="food-name" type="text" placeholder="Food name" name="food_name">
+            </label><br>
+            <label for="food-recipe"></label><br>
+            <label>
+                <textarea class="food-recipe" name="food_recipe" placeholder="Ingredients"></textarea>
+            </label><br>
+            <label for="food-picture"></label><br>
+                <input type="file" name="food_pic" autocomplete="off" required><br>
+                <input class="share-recipe" type="submit" value="Post recipe!">
+        </form>
+
+    </div>
+    <h1>Food Recipes</h1>
+  <div class="container">
+    <div id="food-container"></div>
+  </div>
+  <script>
+    $(document).ready(function() {
+      $.ajax({
+        url: "http://127.0.0.1:5000/api/food",
+        type: "GET",
+        success: function(data) {
+            const foodContainer = $("#food-container");
+            data.forEach(function(food) {
+                let card = $("<div class='card'></div>");
+                let image = $("<div class='card-image'></div>");
+                image.css("background-image", "url(" + food.food_pic + ")");
+                let content = $("<div class='card-content'></div>");
+                let title = $("<div class='card-title'>" + food.food_name + "</div>");
+                let text = $("<div class='card-text'>" + food.food_recipe + "</div>");
+                content.append(title);
+            content.append(text);
+            card.append(image);
+            card.append(content);
+            foodContainer.append(card);
+          });
+        }
+      });
+    });
+  </script>
+
+    <script>
+    function openForm() {
+    document.getElementById("recipe_form").style.display = "block";}
+    function closeForm() {
+      document.getElementById("recipe_form").style.display = "none";
+    }
+    </script>
+{% endblock %}
